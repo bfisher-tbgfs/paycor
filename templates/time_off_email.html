@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Off Requests</title>
+</head>
+
+<body style="font-family: Arial, sans-serif; margin: 10px; background-color: #fff;">
+    <div
+        style="max-width: 1200px; margin: 0 auto; background-color: white; padding: 10px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <h1 style="color: #333; text-align: center; margin-bottom: 30px;">{{ formatted_today }} Time Off Requests
+            (PTO,
+            Sick, WFH)</h1>
+        <table style="width: 100%; border-collapse: collapse; margin-top: 20px; background-color: white;">
+            <thead>
+                <tr>
+                    <th
+                        style="padding: 4px; text-align: left; border-bottom: 1px solid #ddd; background-color: #193a67; color: white; font-weight: bold;">
+                        Employee</th>
+                    <th
+                        style="padding: 4px; text-align: left; border-bottom: 1px solid #ddd; background-color: #193a67; color: white; font-weight: bold;">
+                        Type</th>
+                    <th
+                        style="padding: 4px; text-align: left; border-bottom: 1px solid #ddd; background-color: #193a67; color: white; font-weight: bold;">
+                        Start Time</th>
+                    <th
+                        style="padding: 4px; text-align: left; border-bottom: 1px solid #ddd; background-color: #193a67; color: white; font-weight: bold;">
+                        End Time</th>
+
+
+                </tr>
+            </thead>
+            <tbody>
+                {% if requests %}
+                {% for request in requests %}
+                <tr style="background-color: {% if loop.index is even %}#f9f9f9{% else %}white{% endif %};">
+                    <td style="padding: 4px; text-align: left; border-bottom: 1px solid #ddd;">{{
+                        request.employeeFullName or 'Unknown' }}</td>
+                    <td style="padding: 4px; text-align: left; border-bottom: 1px solid #ddd;">{{ request.benefitCode
+                        }}</td>
+                    <td style="padding: 4px; text-align: left; border-bottom: 1px solid #ddd;">{{ request.start_time }}
+                    </td>
+                    <td style="padding: 4px; text-align: left; border-bottom: 1px solid #ddd;">{{ request.end_time }}
+                    </td>
+                </tr>
+                {% endfor %}
+                {% else %}
+                <tr>
+                    <td colspan="6" style="text-align: center; color: #666; font-style: italic; padding: 20px;">No time
+                        off requests found</td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+        <p style="font-style: italic; margin-left: 10px;">Data generated from Paycor time off requests</p>
+    </div>
+</body>
+
+</html>
