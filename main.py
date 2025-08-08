@@ -173,7 +173,7 @@ def generate_html_with_jinja2(requests, filename="time_off_table.html"):
     print(f"HTML table generated with Jinja2 and saved to {filename}")
 
 
-def generate_email_safe_html(requests, filename="time_off_email.html"):
+def generate_email_safe_html(requests, filename="time_off_email.html", save_html=False):
     """Generate email-safe HTML with inline styles"""
     # Ensure templates directory exists
     os.makedirs("templates", exist_ok=True)
@@ -203,8 +203,9 @@ def generate_email_safe_html(requests, filename="time_off_email.html"):
     )
 
     # Write to file
-    with open(filename, "w", encoding="utf-8") as f:
-        f.write(html_content)
+    if save_html:
+        with open(filename, "w", encoding="utf-8") as f:
+            f.write(html_content)
 
     print(f"Email-safe HTML generated and saved to {filename}")
     return html_content
@@ -217,9 +218,7 @@ def send_email(
 ):
     # Create date-based subject
     today = dt.date.today()
-    subject = (
-        f"Daily Time Off Requests - {today.strftime('%b')} {today.day}, {today.year}"
-    )
+    subject = f"Daily Time Off - {today.strftime('%b')} {today.day}, {today.year}"
 
     try:
         # Create message
@@ -293,16 +292,16 @@ if __name__ == "__main__":
     # generate_html_with_jinja2(approved_requests)
 
     # Generate email-safe HTML
-    email_html = generate_email_safe_html(approved_requests)
+    email_html = generate_email_safe_html(approved_requests, save_html=False)
 
     # Send email with the HTML content
     # Configure your email settings here
-    sender_email = "support@tbgfs.com"  # Replace with your email
-    recipient_emails = ["bfisher@tbgfs.com"]  # Replace with recipient emails
+    sender_email = config["EMAIL_FROM"]
+    recipient_emails = [config["EMAIL_TO"]]
 
     # Send the email with the HTML content
-    # send_email(
-    #     email_html,
-    #     sender_email=sender_email,
-    #     recipient_emails=recipient_emails,
-    # )
+    send_email(
+        email_html,
+        sender_email=sender_email,
+        recipient_emails=recipient_emails,
+    )
