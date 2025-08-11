@@ -207,7 +207,7 @@ def generate_email_safe_html(requests, filename="time_off_email.html", save_html
         with open(filename, "w", encoding="utf-8") as f:
             f.write(html_content)
 
-    print(f"Email-safe HTML generated and saved to {filename}")
+    # print(f"Email-safe HTML generated and saved to {filename}")
     return html_content
 
 
@@ -237,8 +237,9 @@ def send_email(
             server.login(config["SMTP_USERNAME"], config["SMTP_PASSWORD"])
             server.sendmail(sender_email, recipient_emails, msg.as_string())
 
-        print(f"Email sent successfully to {', '.join(recipient_emails)}")
-        print(f"Subject: {subject}")
+        print(
+            f"Email sent successfully to {', '.join(recipient_emails)}, Subject: {subject}"
+        )
         return True
 
     except Exception as e:
@@ -246,7 +247,7 @@ def send_email(
         return False
 
 
-if __name__ == "__main__":
+def main():
     with open("access_tokens.json", "r") as f:
         access_tokens = PaycorAccessTokenResponse(**json.load(f))
 
@@ -269,6 +270,11 @@ if __name__ == "__main__":
     approved_requests = [
         request for request in time_off_requests.records if request.status == "Approved"
     ]
+
+    # Update benefitCode: change "Sick" to "PTO"
+    for request in approved_requests:
+        if request.benefitCode == "Sick":
+            request.benefitCode = "PTO"
 
     # Sort approved requests by benefit code descending
     approved_requests.sort(key=lambda request: request.benefitCode or "", reverse=True)
@@ -305,3 +311,15 @@ if __name__ == "__main__":
         sender_email=sender_email,
         recipient_emails=recipient_emails,
     )
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+        send_email(
+            html_content=f"An error occurred: {str(e)}",
+            sender_email="bfisher@tbgfs.com",
+            recipient_emails=["bfisher@tbgfs.com"],
+        )
