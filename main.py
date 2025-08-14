@@ -273,7 +273,7 @@ def main():
 
     # Update benefitCode: change "Sick" to "PTO"
     for request in approved_requests:
-        if request.benefitCode == "Sick":
+        if request.benefitCode != "WFH":
             request.benefitCode = "PTO"
 
     # Sort approved requests by benefit code descending
