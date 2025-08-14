@@ -277,7 +277,9 @@ def main():
             request.benefitCode = "PTO"
 
     # Sort approved requests by benefit code descending
-    approved_requests.sort(key=lambda request: request.benefitCode or "", reverse=True)
+    approved_requests.sort(
+        key=lambda request: request.days[0].startTime or "", reverse=True
+    )
 
     # Print approved requests data
     # print(f"Found {len(time_off_requests.records)} total time off requests")
