@@ -231,8 +231,13 @@ def send_email(
         html_part = MIMEText(html_content, "html")
         msg.attach(html_part)
 
+        assert config["SMTP_SERVER"], "SMTP_SERVER must be set in .env"
+        assert config["SMTP_PORT"], "SMTP_PORT must be set in .env"
+        assert config["SMTP_USERNAME"], "SMTP_USERNAME must be set in .env"
+        assert config["SMTP_PASSWORD"], "SMTP_PASSWORD must be set in .env"
+
         # Connect to server and send email
-        with smtplib.SMTP(config["SMTP_SERVER"], config["SMTP_PORT"]) as server:
+        with smtplib.SMTP(config["SMTP_SERVER"], int(config["SMTP_PORT"])) as server:
             server.starttls()  # Enable TLS encryption
             server.login(config["SMTP_USERNAME"], config["SMTP_PASSWORD"])
             server.sendmail(sender_email, recipient_emails, msg.as_string())
@@ -278,7 +283,7 @@ def main():
 
     # Sort approved requests by benefit code descending
     approved_requests.sort(
-        key=lambda request: request.days[0].startTime or "", reverse=True
+        key=lambda request: request.employeeFullName or "", reverse=False
     )
 
     # Print approved requests data
